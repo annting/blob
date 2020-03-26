@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>醉熊猫</title>
+    <meta name="description" content="一个热爱coding的胖子">
+    <meta name="generator" content="VuePress 1.4.0">
+    <link rel="icon" href="/logo.png">
+    
+    <link rel="preload" href="/assets/css/0.styles.9970a1b7.css" as="style"><link rel="preload" href="/assets/js/app.2e6a26e9.js" as="script"><link rel="preload" href="/assets/js/2.afbcf7b5.js" as="script"><link rel="preload" href="/assets/js/8.66131d39.js" as="script"><link rel="prefetch" href="/assets/js/3.d052a4f0.js"><link rel="prefetch" href="/assets/js/4.5f60d4ea.js"><link rel="prefetch" href="/assets/js/5.9a2d7822.js"><link rel="prefetch" href="/assets/js/6.307b63c4.js"><link rel="prefetch" href="/assets/js/7.02139f15.js"><link rel="prefetch" href="/assets/js/9.f7a5189e.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.9970a1b7.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/logo.png" alt="醉熊猫" class="logo"> <span class="site-name can-hide">醉熊猫</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/pages/frontend/ui5/dynamic-table.html" class="nav-link router-link-exact-active router-link-active">
+  前端积累
+</a></div><div class="nav-item"><a href="https://github.com/annting" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/pages/frontend/ui5/dynamic-table.html" class="nav-link router-link-exact-active router-link-active">
+  前端积累
+</a></div><div class="nav-item"><a href="https://github.com/annting" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>SapUI5/OpenUI5</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/pages/frontend/ui5/dynamic-table.html" class="active sidebar-link">动态表格</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>其他</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><div class="language-js extra-class"><pre class="language-js"><code>    
+    <span class="token keyword">var</span> that <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">;</span>
+      <span class="token keyword">var</span> aData <span class="token operator">=</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          qual<span class="token operator">:</span> <span class="token string">'1'</span><span class="token punctuation">,</span>
+          ol<span class="token operator">:</span> <span class="token number">100</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span>
+          qual<span class="token operator">:</span> <span class="token string">'2'</span><span class="token punctuation">,</span>
+          ol<span class="token operator">:</span> <span class="token number">200</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">var</span> aColumnData <span class="token operator">=</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          columnId<span class="token operator">:</span> <span class="token string">'qual'</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span>
+          columnId<span class="token operator">:</span> <span class="token string">'ol'</span>
+        <span class="token punctuation">}</span>
+        
+      <span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">var</span> oMetaModel <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">sap<span class="token punctuation">.</span>ui<span class="token punctuation">.</span>model<span class="token punctuation">.</span>json<span class="token punctuation">.</span>JSONModel</span><span class="token punctuation">(</span>aColumnData<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">var</span> oDataModel <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">sap<span class="token punctuation">.</span>ui<span class="token punctuation">.</span>model<span class="token punctuation">.</span>json<span class="token punctuation">.</span>JSONModel</span><span class="token punctuation">(</span>aData<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getView</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setModel</span><span class="token punctuation">(</span>oMetaModel<span class="token punctuation">,</span> <span class="token string">'column'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getView</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setModel</span><span class="token punctuation">(</span>oDataModel<span class="token punctuation">,</span> <span class="token string">'data'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">var</span> oTable <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getView</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">byId</span><span class="token punctuation">(</span><span class="token string">'MyTable'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      oTable<span class="token punctuation">.</span><span class="token function">bindColumns</span><span class="token punctuation">(</span><span class="token string">'column&gt;/'</span><span class="token punctuation">,</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">index<span class="token punctuation">,</span> oContext</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">var</span> sColumnId <span class="token operator">=</span> oContext<span class="token punctuation">.</span><span class="token function">getObject</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>columnId<span class="token punctuation">;</span>
+
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">sap<span class="token punctuation">.</span>ui<span class="token punctuation">.</span>table<span class="token punctuation">.</span>Column</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+          id<span class="token operator">:</span> sColumnId<span class="token punctuation">,</span>
+          label<span class="token operator">:</span> sColumnId<span class="token punctuation">,</span>
+          template<span class="token operator">:</span> that<span class="token punctuation">.</span><span class="token function">renderFunc</span><span class="token punctuation">(</span>sColumnId<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      oTable<span class="token punctuation">.</span><span class="token function">bindRows</span><span class="token punctuation">(</span><span class="token string">'data&gt;/'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><!----> <span class="next"><a href="/pages/frontend/other/20200107.html">
+        JS实现千分位格式化
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.2e6a26e9.js" defer></script><script src="/assets/js/2.afbcf7b5.js" defer></script><script src="/assets/js/8.66131d39.js" defer></script>
+  </body>
+</html>
