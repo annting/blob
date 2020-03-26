@@ -1,5 +1,9 @@
-name: Build and Deploy
-on: [push]
+
+name: GitHub Actions Build and Deploy Demo
+on:
+  push:
+    branches:
+      - master
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -8,10 +12,9 @@ jobs:
       uses: actions/checkout@master
 
     - name: Build and Deploy
-      uses: grasilife/github-pages-deploy-action@master
+      uses: JamesIves/github-pages-deploy-action@master
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BASE_BRANCH: master # The branch the action should deploy from.
-        BRANCH: github-io # The branch the action should deploy to.
-        FOLDER: build # The folder the action should deploy.
-        BUILD_SCRIPT: npm install && npm run-script build # The build script the action should run prior to deploying.
+        BRANCH: github-io
+        FOLDER: build
+        BUILD_SCRIPT: npm install && npm run build
