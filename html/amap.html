@@ -1,299 +1,456 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="initial-scale=1.0, user-scalable=no, width=device-width"
+    />
     <title>从高德地图导出详细线路坐标</title>
     <style>
-    html,
-    body,
-    #app {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-    }
-    
-    .marker {
+      html,
+      body,
+      #app {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .marker {
         position: absolute;
         top: -20px;
         right: -118px;
         color: #fff;
         padding: 4px 10px;
-        box-shadow: 1px 1px 1px rgba(10, 10, 10, .2);
+        box-shadow: 1px 1px 1px rgba(10, 10, 10, 0.2);
         white-space: nowrap;
         font-size: 12px;
-        font-family: "";
-        background-color: #25A5F7;
+        font-family: '';
+        background-color: #25a5f7;
         border-radius: 3px;
-    }
-    .markerlnglat {
-      width: 20px;
-      height: 30px;
-    }
+      }
+      .markerlnglat {
+        width: 20px;
+        height: 30px;
+      }
 
-    #app {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-    }
-  
+      #app {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+      }
     </style>
-    <link rel="stylesheet" href="//unpkg.com/view-design/dist/styles/iview.css">
+    <link
+      rel="stylesheet"
+      href="//unpkg.com/view-design/dist/styles/iview.css"
+    />
     <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
     <script src="//unpkg.com/view-design/dist/iview.min.js"></script>
+    <script src="//unpkg.com/jsonview-vue@2.0.1/dist/jsonview.min.js"></script>
     <script src="//unpkg.com/lodash@4.17.15/lodash.min.js"></script>
+    <script src="//unpkg.com/vue-clipboard2@0.3.1/dist/vue-clipboard.min.js"></script>
     <!-- <script src="https://unpkg.com/vue-amap/dist/index.js"></script> -->
 
-    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=79bbbb77646f2a616c4a42124889445c&plugin=AMap.Geocoder,AMap.LngLat,AMap.ContextMenu,AMap.Driving"></script>
-</head>
-<body>
-  <div id="app">
-    <div id="map"></div>
-    <div>
-      <!-- <i-input placeholder="起始位置" ></i-input> -->
-      <auto-complete
-        v-model="start.address"
-        @on-search="searchHandle"
-        placeholder="起始位置"
-        @on-blur="updateHandler(start)"
+    <script
+      type="text/javascript"
+      src="https://webapi.amap.com/maps?v=1.4.15&key=79bbbb77646f2a616c4a42124889445c&plugin=AMap.Geocoder,AMap.LngLat,AMap.ContextMenu,AMap.Driving"
+    ></script>
+  </head>
+  <body>
+    <div id="app">
+      <div id="map"></div>
+      <div>
+        <!-- <i-input placeholder="起始位置" ></i-input> -->
+        <auto-complete
+          v-model="start.address"
+          @on-search="searchHandle"
+          placeholder="起始位置"
+          @on-blur="updateHandler(start)"
         >
-        <Option v-for="item in searchData" :value="item" :key="item" @click="setStart(item)">{{ item.name }} - {{item.address}}</Option>
-      </auto-complete>
-      <i-input v-for="mk in markers" :key="mk.id" v-model="mk.address">
-        <i-button slot="append" icon="md-close" @click="deleteMarker(mk)"></i-button>
-      </i-input>
+          <option
+            v-for="item in searchData"
+            :value="item"
+            :key="item"
+            @click="setStart(item)"
+            >{{ item.name }} - {{item.address}}</option
+          >
+        </auto-complete>
+        <i-input v-for="mk in markers" :key="mk.id" v-model="mk.address">
+          <i-button
+            slot="append"
+            icon="md-close"
+            @click="deleteMarker(mk)"
+          ></i-button>
+        </i-input>
 
-      <auto-complete
+        <auto-complete
           v-model="end.address"
           @on-search="searchHandle"
           placeholder="结束位置"
           @on-blur="updateHandler(end)"
         >
-        <Option v-for="item in searchData" :value="item" :key="item" @click="setEnd(item)">{{ item.name }} - {{item.address}}</Option>
-    </auto-complete>
+          <option
+            v-for="item in searchData"
+            :value="item"
+            :key="item"
+            @click="setEnd(item)"
+            >{{ item.name }} - {{item.address}}</option
+          >
+        </auto-complete>
 
-    <i-button @click="createDriving">导出线路</i-button>
-    <i-button @click="exportMarker">导出标记点</i-button>
+        <i-button @click="createDriving">查看线路</i-button>
+        <i-button @click="  showResSpot = true">导出线路</i-button>
+        <i-button @click="exportMarker">导出标记点</i-button>
+        <modal
+          ok-text="复制"
+          @on-ok="copyRotateSpot"
+          v-model="showResSpot"
+          title="查看生成的线路"
+        >
+          <div style="height: 500px; overflow-y: auto;">
+            <json-view :json="rotateSpot"></json-view>
+          </div>
+        </modal>
+
+        <modal v-model="showMarkerModal" title="查看线路点" width="800px">
+          <div>
+            <i-table :columns="columns" :data="exportMarkers">
+              <template slot-scope="{ row, index }" slot="name">
+                <i-input :value="row.title" style="width:100%" @on-change="changeTitle($event, index)"/>
+              </template>
+              <template slot-scope="{ row, index }" slot="time">
+                <!-- <time-picker format="HH:mm" style="width: 100px"></time-picker> -->
+                <i-input v-model="row.arrivalTime" style="width:100%" @on-change="changeTime($event, index)"/>
+               
+              </template>
+              <template slot-scope="{ row, index }" slot="assist">
+                <i-switch :value="row.isAssist"  @on-change="changeSwitch($event, index)"></i-switch>
+              </template>
+            </i-table>
+          </div>
+          <div slot="footer">
+            <i-button type="primary" @click="openMarkersSpotModal">
+              查看数据
+            </i-button>
+          </div>
+        </modal>
+
+        <modal
+          ok-text="复制"
+          @on-ok="copyMarkersSpot"
+          v-model="showMarkerspot"
+          title="查看生成的线路"
+        >
+          <div style="height: 500px; overflow-y: auto;">
+            <json-view :json="markerspot"></json-view>
+          </div>
+        </modal>
+      </div>
     </div>
-  </div>
-<script type="text/javascript">
-    new Vue({
-  el: '#app',
-  data: function() {
-    return {
-      map: {},
-      markers: [],
-      driving: [],
-      searchData: [],
-
-      start: { address: '' },
-      end: { address: '' },
-      amap: {
-        zoom: 12,
-        center: [108.95346, 34.265725],
-        plugin: [
-          {
-            pName: 'Driving'
-          }
-        ]
-      }
-    };
-  },
-  methods: {
-    addMarker(lnglat, type) {
-      let _this = this;
-      this.geocoder.getAddress(lnglat, function(status, result) {
-        if (status === 'complete' && result.regeocode) {
-          var address = result.regeocode.formattedAddress;
-          if (!_.isNil(_.get(_this, type + '.obj'))) {
-            _this[type].obj.setMap(null);
-          }
-          var marker = _this.createMarker(lnglat, address);
-          var obj = {
-            obj: marker,
-            lnglat: lnglat,
-            address: address,
-            id: Date.now()
+    <script type="text/javascript">
+      Vue.use(JsonView);
+      new Vue({
+        el: '#app',
+        data: function() {
+          return {
+            map: {},
+            markers: [],
+            driving: [],
+            searchData: [],
+            showResSpot: false,
+            start: { address: '' },
+            end: { address: '' },
+            rotateSpot: {},
+            showMarkerModal: false,
+            exportMarkers: [],
+            showMarkerspot: false,
+            markerspot: {},
+            amap: {
+              zoom: 12,
+              center: [108.95346, 34.265725],
+              plugin: [
+                {
+                  pName: 'Driving'
+                }
+              ]
+            },
+            columns: [
+              {
+                title: '地址',
+                slot: 'name'
+              },
+              {
+                title: '时间',
+                slot: 'time',
+                width: 120
+              },
+              {
+                title: '是否为辅助点',
+                slot: 'assist',
+                width: 120
+              }
+            ]
           };
-          if (_.isNil(type)) {
-            _this.markers.push(obj);
-          } else {
-            _this[type] = obj;
-            console.log(_this);
+        },
+        methods: {
+          addMarker(lnglat, type) {
+            let _this = this;
+            this.geocoder.getAddress(lnglat, function(status, result) {
+              if (status === 'complete' && result.regeocode) {
+                var address = result.regeocode.formattedAddress;
+                if (!_.isNil(_.get(_this, type + '.obj'))) {
+                  _this[type].obj.setMap(null);
+                }
+                var marker = _this.createMarker(lnglat, address);
+                var obj = {
+                  obj: marker,
+                  lnglat: lnglat,
+                  address: address,
+                  id: Date.now()
+                };
+                if (_.isNil(type)) {
+                  _this.markers.push(obj);
+                } else {
+                  _this[type] = obj;
+                  console.log(_this);
+                }
+              } else {
+                log.error('根据经纬度查询地址失败');
+              }
+            });
+          },
+          updateHandler(val) {
+            if (_.has(val, 'obj')) {
+              this.updateMarker(val.obj, val.lnglat, val.address);
+            }
+          },
+          updateMarker(marker, lnglat, address) {
+            // 自定义点标记内容
+            var markerContent = document.createElement('div');
+            // 点标记中的图标
+            var markerImg = document.createElement('img');
+            markerImg.className = 'markerlnglat';
+            markerImg.src =
+              '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png';
+            markerContent.appendChild(markerImg);
+            // 点标记中的文本
+            var markerSpan = document.createElement('span');
+            markerSpan.className = 'marker';
+            markerSpan.innerHTML = address;
+            markerContent.appendChild(markerSpan);
+            marker.setContent(markerContent); //更新点标记内容
+            marker.setPosition(lnglat); //更新点标记位置
+          },
+          createMarker(lnglat, address) {
+            let _this = this;
+            var marker = new AMap.Marker({
+              map: _this.map
+            });
+            this.updateMarker(marker, lnglat, address);
+            return marker;
+          },
+          createDriving() {
+            let { start, end, markers } = this;
+            let _this = this;
+            if (!_.isEmpty(start) && !_.isEmpty(end)) {
+              let waypoints = _.map(markers, item => {
+                return item.lnglat;
+              });
+
+              this.driving.search(
+                start.lnglat,
+                end.lnglat,
+                {
+                  waypoints
+                },
+                function(status, result) {
+                  if (status === 'complete') {
+                    console.log(result);
+
+                    let list = _.flatten(
+                      _.map(_.get(result, 'routes[0].steps'), item => {
+                        return item.path;
+                      })
+                    );
+                    _this.rotateSpot = _.uniqWith(
+                      _.map(list, item => {
+                        return { longitude: item.lng, latitude: item.lat };
+                      }),
+                      _.isEqual
+                    );
+
+                    // log.success('绘制驾车路线完成');
+                  } else {
+                    // log.error('获取驾车数据失败：' + result);
+                  }
+                }
+              );
+            }
+          },
+          copyRotateSpot() {
+            this.$copyText(JSON.stringify(this.rotateSpot)).then(res => {
+              this.$Message.info('复制成功');
+            });
+          },
+          copyMarkersSpot() {
+            this.$copyText(JSON.stringify(this.markerspot)).then(res => {
+              this.$Message.info('复制成功');
+            });
+          },
+          deleteMarker(marke) {
+            marke.obj.setMap(null);
+            let _markers = _.clone(this.markers);
+            _.remove(_markers, function(item) {
+              return item.id === marke.id;
+            });
+            this.markers = _markers;
+          },
+          searchHandle(val) {
+            let _this = this;
+            AMap.plugin('AMap.Autocomplete', function() {
+              // 实例化Autocomplete
+              var autoOptions = {
+                city: '029',
+                citylimit: true
+              };
+              var autoComplete = new AMap.Autocomplete(autoOptions);
+              autoComplete.search(val, function(status, result) {
+                // 搜索成功时，result即是对应的匹配数据
+                if (result.info === 'OK') {
+                  _this.searchData = result.tips;
+                }
+              });
+            });
+          },
+          setStart(start) {
+            let { location, name, address } = start;
+            this.start = {
+              lnglat: [location.lng, location.lat],
+              address: name + address,
+              id: Date.now()
+            };
+            var marker = this.createMarker(
+              this.start.lnglat,
+              this.start.address
+            );
+            this.start.obj = marker;
+          },
+          setEnd(end) {
+            let { location, name, address } = end;
+            this.end = {
+              lnglat: [location.lng, location.lat],
+              address: name + address,
+              id: Date.now()
+            };
+            var marker = this.createMarker(this.end.lnglat, this.end.address);
+            this.end.obj = marker;
+          },
+          exportMarker() {
+            console.log('------标注点------');
+            let markers = [];
+            markers.push(this.start);
+            let waypoints = _.map(this.markers, item => {
+              return item;
+            });
+            markers = [...markers, ...waypoints];
+
+            markers.push(this.end);
+
+            this.exportMarkers = _.map(markers, item => {
+              return {
+                latitude: item.lnglat.lat,
+                longitude: item.lnglat.lng,
+                title: item.address,
+                arrivalTime: item.arrivalTime,
+                isAssist: false
+              };
+            });
+            console.log( this.exportMarkers)
+
+            // this.exportMarkers = markers;
+            this.showMarkerModal = true;
+          },
+          openMarkersSpotModal() {
+            let { exportMarkers: mks } = this;
+
+            console.log(this.exportMarkers)
+            this.markerspot = _.map(
+              _.filter(mks, { isAssist: false }),
+              item => {
+                let tmp = _.omit(item, 'isAssist');
+                if (_.isNil(tmp.arrivalTime)) {
+                  tmp.arrivalTime = '--';
+                }
+                return tmp;
+              }
+            );
+
+            this.showMarkerspot = true;
+          },
+          changeSwitch(e, index) {
+            this.exportMarkers[index].isAssist = e
+          },
+          changeTime(e, index) {
+            this.exportMarkers[index].arrivalTime = e.target.value
+          },
+          changeTitle(e, index) {
+            this.exportMarkers[index].title = e.target.value
           }
-        } else {
-          log.error('根据经纬度查询地址失败');
+        },
+        mounted() {
+          let _this = this;
+          _this.map = new AMap.Map('map', {
+            resizeEnable: true,
+            center: this.amap.center,
+            zoom: 12 // 地图显示的缩放级别
+          });
+          this.geocoder = new AMap.Geocoder({
+            city: '029',
+            radius: 1000 //范围，默认：500
+          });
+
+          var lnglat = new AMap.LngLat(108.95346, 34.265725);
+          var contextMenu = new AMap.ContextMenu();
+          //右键添加Marker标记
+          contextMenu.addItem(
+            '添加标记',
+            function() {
+              _this.addMarker(lnglat);
+            },
+            3
+          );
+          contextMenu.addItem(
+            '设置为起点',
+            function() {
+              _this.addMarker(lnglat, 'start');
+            },
+            3
+          );
+          contextMenu.addItem(
+            '设置为终点',
+            function() {
+              _this.addMarker(lnglat, 'end');
+            },
+            3
+          );
+          this.map.on('rightclick', function(e) {
+            contextMenu.open(_this.map, e.lnglat);
+            lnglat = e.lnglat;
+          });
+
+          // 线路图
+          this.driving = new AMap.Driving({
+            map: _this.map
+          });
+
+          //自动完成
+          // var auto = new AMap.Autocomplete({
+          //   input: "tipinput"
+          // });
+          // contextMenu.open(this.map, lnglat);
         }
       });
-    },
-    updateHandler(val) {
-      if (_.has(val, 'obj')) {
-        this.updateMarker(val.obj, val.lnglat, val.address);
-      }
-    },
-    updateMarker(marker, lnglat, address) {
-      // 自定义点标记内容
-      var markerContent = document.createElement('div');
-      // 点标记中的图标
-      var markerImg = document.createElement('img');
-      markerImg.className = 'markerlnglat';
-      markerImg.src =
-        '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png';
-      markerContent.appendChild(markerImg);
-      // 点标记中的文本
-      var markerSpan = document.createElement('span');
-      markerSpan.className = 'marker';
-      markerSpan.innerHTML = address;
-      markerContent.appendChild(markerSpan);
-      marker.setContent(markerContent); //更新点标记内容
-      marker.setPosition(lnglat); //更新点标记位置
-    },
-    createMarker(lnglat, address) {
-      let _this = this;
-      var marker = new AMap.Marker({
-        map: _this.map
-      });
-      this.updateMarker(marker, lnglat, address);
-      return marker;
-    },
-    createDriving() {
-      let { start, end, markers } = this;
-      if (!_.isEmpty(start) && !_.isEmpty(end)) {
-        let waypoints = _.map(markers, item => {
-          return item.lnglat;
-        });
-
-        this.driving.search(
-          start.lnglat,
-          end.lnglat,
-          {
-            waypoints
-          },
-          function(status, result) {
-            if (status === 'complete') {
-              console.log(result);
-              // log.success('绘制驾车路线完成');
-            } else {
-              // log.error('获取驾车数据失败：' + result);
-            }
-          }
-        );
-      }
-    },
-    deleteMarker(marke) {
-      marke.obj.setMap(null);
-      let _markers = _.clone(this.markers);
-      _.remove(_markers, function(item) {
-        return item.id === marke.id;
-      });
-      this.markers = _markers;
-    },
-    searchHandle(val) {
-      let _this = this;
-      AMap.plugin('AMap.Autocomplete', function() {
-        // 实例化Autocomplete
-        var autoOptions = {
-          city: '029',
-          citylimit: true
-        };
-        var autoComplete = new AMap.Autocomplete(autoOptions);
-        autoComplete.search(val, function(status, result) {
-          // 搜索成功时，result即是对应的匹配数据
-          if (result.info === 'OK') {
-            _this.searchData = result.tips;
-          }
-        });
-      });
-    },
-    setStart(start) {
-      let { location, name, address } = start;
-      this.start = {
-        lnglat: [location.lng, location.lat],
-        address: name + address,
-        id: Date.now()
-      };
-      var marker = this.createMarker(this.start.lnglat, this.start.address);
-      this.start.obj = marker;
-    },
-    setEnd(end) {
-      let { location, name, address } = end;
-      this.end = {
-        lnglat: [location.lng, location.lat],
-        address: name + address,
-        id: Date.now()
-      };
-      var marker = this.createMarker(this.end.lnglat, this.end.address);
-      this.end.obj = marker;
-    },
-    exportMarker() {
-      console.log('------标注点------');
-      let markers = [];
-      markers.push(this.start);
-      let waypoints = _.map(this.markers, item => {
-        return item;
-      });
-      markers = [...markers, ...waypoints];
-
-      markers.push(this.end);
-
-      console.log(markers);
-    }
-  },
-  mounted() {
-    let _this = this;
-    _this.map = new AMap.Map('map', {
-      resizeEnable: true,
-      center: this.amap.center,
-      zoom: 12 // 地图显示的缩放级别
-    });
-    this.geocoder = new AMap.Geocoder({
-      city: '029',
-      radius: 1000 //范围，默认：500
-    });
-
-    var lnglat = new AMap.LngLat(108.95346, 34.265725);
-    var contextMenu = new AMap.ContextMenu();
-    //右键添加Marker标记
-    contextMenu.addItem(
-      '添加标记',
-      function() {
-        _this.addMarker(lnglat);
-      },
-      3
-    );
-    contextMenu.addItem(
-      '设置为起点',
-      function() {
-        _this.addMarker(lnglat, 'start');
-      },
-      3
-    );
-    contextMenu.addItem(
-      '设置为终点',
-      function() {
-        _this.addMarker(lnglat, 'end');
-      },
-      3
-    );
-    this.map.on('rightclick', function(e) {
-      contextMenu.open(_this.map, e.lnglat);
-      lnglat = e.lnglat;
-    });
-
-    // 线路图
-    this.driving = new AMap.Driving({
-      map: _this.map
-    });
-
-    //自动完成
-    // var auto = new AMap.Autocomplete({
-    //   input: "tipinput"
-    // });
-    // contextMenu.open(this.map, lnglat);
-  }
-});
-
-</script>
-</body>
+    </script>
+  </body>
 </html>
